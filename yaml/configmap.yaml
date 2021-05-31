@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sidedish-config
+  namespace: cnatest
+data:
+  api.url.pay: http://pay:8080
