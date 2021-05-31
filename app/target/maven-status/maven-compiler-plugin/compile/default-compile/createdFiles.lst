@@ -1,0 +1,15 @@
+sidedish\AbstractEvent$1.class
+sidedish\OrderCancelled.class
+sidedish\PolicyHandler.class
+sidedish\Shipped.class
+sidedish\config\kafka\KafkaProcessor.class
+sidedish\Ordered.class
+sidedish\external\Payment.class
+sidedish\Order.class
+sidedish\PayCompleted.class
+sidedish\OrderRepository.class
+sidedish\PayCancelled.class
+sidedish\OrderController.class
+sidedish\external\PaymentService.class
+sidedish\AbstractEvent.class
+sidedish\AppApplication.class
