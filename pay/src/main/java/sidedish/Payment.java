@@ -26,10 +26,10 @@ public class Payment {
             BeanUtils.copyProperties(this, payCompleted);
             payCompleted.publish();
             System.out.println(toString());
-            System.out.println("***** 결재 완료 *****");
 
             try {
-                Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+                Thread.currentThread().sleep((long) (100 + Math.random() * 100));
+                System.out.println("***** 결재 완료 *****");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

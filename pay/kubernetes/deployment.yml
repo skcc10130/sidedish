@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pay
-  namespace: phone82  
+  namespace: cnatest
   labels:
     app: pay
 spec:

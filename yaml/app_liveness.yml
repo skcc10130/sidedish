@@ -1,26 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pay
+  name: app
   namespace: cnatest
   labels:
-    app: pay
+    app: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pay
+      app: app
   template:
     metadata:
       labels:
-        app: pay
+        app: app
     spec:
       containers:
-        - name: pay
-          image: skcc10130acr.azurecr.io/pay:v1
+        - name: app
+          image: skcc10130acr.azurecr.io/app:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          env:
+            - name: api.url.pay
+              valueFrom:
+                configMapKeyRef:
+                  name: sidedish-config
+                  key: api.url.pay
           readinessProbe:
             httpGet:
               path: '/actuator/health'
@@ -29,14 +35,19 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 10
+#          livenessProbe:
+#            httpGet:
+#              path: '/actuator/health'
+#              port: 8080
+#            initialDelaySeconds: 120
+#            timeoutSeconds: 2
+#            periodSeconds: 5
+#            failureThreshold: 5
           livenessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 120
-            timeoutSeconds: 2
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 5
             periodSeconds: 5
-            failureThreshold: 5
           resources:
             limits:
               cpu: 500m
@@ -48,13 +59,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pay
+  name: app
   namespace: cnatest
   labels:
-    app: pay
+    app: app
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: pay
+    app: app

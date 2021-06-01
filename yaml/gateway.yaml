@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: skcc10130acr.azurecr.io/gateway:1.0
+          image: skcc10130acr.azurecr.io/gateway:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
