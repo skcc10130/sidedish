@@ -27,12 +27,12 @@ public class Payment {
             payCompleted.publish();
             System.out.println(toString());
 
-            try {
-                Thread.currentThread().sleep((long) (100 + Math.random() * 100));
-                System.out.println("***** 결재 완료 *****");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.currentThread().sleep((long) (100 + Math.random() * 100));
+//                System.out.println("***** 결재 완료 *****");
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
         } else if ("OrderCancelled".equals(process)) {
             System.out.println("***** 결재 취소 중 *****");
