@@ -78,6 +78,6 @@ hystrix:
     default:
       execution.isolation.thread.timeoutInMilliseconds: 500
 
-api:
-  url:
-    pay: ${configmapurl}
+#api:
+#  url:
+#    pay: ${configmapurl}

@@ -1,10 +1,8 @@
 package sidedish;
 
-import javax.persistence.*;
-
 import org.springframework.beans.BeanUtils;
 
-import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "StoreManage_table")
