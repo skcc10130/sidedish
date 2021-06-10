@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="app" />
         <module name="pay" />
-        <module name="boot-camp-gateway" />
         <module name="store" />
+        <module name="boot-camp-gateway" />
         <module name="customer" />
       </profile>
     </annotationProcessing>
@@ -17,6 +17,9 @@
       <module name="app" target="1.8" />
       <module name="boot-camp-gateway" target="1.8" />
       <module name="customer" target="1.8" />
+      <module name="gateway" target="16" />
+      <module name="gateway (1)" target="1.8" />
+      <module name="gateway (2)" target="1.8" />
       <module name="pay" target="1.8" />
       <module name="store" target="1.8" />
     </bytecodeTargetLevel>
@@ -26,6 +29,7 @@
       <module name="app" options="-parameters" />
       <module name="boot-camp-gateway" options="-parameters" />
       <module name="customer" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="pay" options="-parameters" />
       <module name="store" options="-parameters" />
     </option>
