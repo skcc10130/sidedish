@@ -49,7 +49,6 @@
 ## Event Storming 결과
 
 ### 이벤트 도출
-![image](https://user-images.githubusercontent.com/70673885/97949704-dc87e600-1dd7-11eb-9525-544b2411cc51.png)
 ![CNA_1](https://user-images.githubusercontent.com/82795797/121636714-4af5fa80-cac3-11eb-8d71-0b96d6abe9cd.png)
 
 ### 부적격 이벤트 탈락
