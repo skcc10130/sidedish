@@ -42,7 +42,6 @@
 
 ## AS-IS 조직 (Horizontally-Aligned)
   ![image](https://user-images.githubusercontent.com/487999/79684144-2a893200-826a-11ea-9a01-79927d3a0107.png)
-  
 
 ## TO-BE 조직 (Vertically-Aligned)
   ![image](https://user-images.githubusercontent.com/487999/79684159-3543c700-826a-11ea-8d5f-a3fc0c4cad87.png)
@@ -50,8 +49,8 @@
 ## Event Storming 결과
 
 ### 이벤트 도출
-
 ![image](https://user-images.githubusercontent.com/70673885/97949704-dc87e600-1dd7-11eb-9525-544b2411cc51.png)
+![CNA_1](https://user-images.githubusercontent.com/82795797/121636714-4af5fa80-cac3-11eb-8d71-0b96d6abe9cd.png)
 
 ### 부적격 이벤트 탈락
 > 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함.
