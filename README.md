@@ -491,6 +491,8 @@ kubectl get deploy app -w -n cnatest
 
 ![image](https://user-images.githubusercontent.com/73699193/98103249-14765280-1ed8-11eb-8c7c-9ea1c67e03cf.png)
 
+![image](https://user-images.githubusercontent.com/82795797/122678805-40ee9d00-d223-11eb-90c2-8af23b70a14e.png)
+
 
 ## 무정지 재배포
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
