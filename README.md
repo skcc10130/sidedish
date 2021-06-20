@@ -188,46 +188,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 ```
 
 > 적용 후 REST API 테스트
+![image](https://user-images.githubusercontent.com/82795797/122676200-f3206780-d217-11eb-99ac-c0fa6a04590e.png)
 
-
-```
-C:\>http POST http://localhost:8081/orders item=sidedish1 qty=1 price=11111 store=1
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/1"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/1"
-        }
-    },
-    "item": "sidedish1",
-    "price": 11111.0,
-    "qty": 1,
-    "status": "Ordered",
-    "store": "1"
-}
-```
-```
-C:\>http GET http://localhost:8081/orders/1
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/1"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/1"
-        }
-    },
-    "item": "sidedish1",
-    "price": 11111.0,
-    "qty": 1,
-    "status": "Shipped",
-    "store": "1"
-}
-```
 
 ## 폴리글랏 퍼시스턴스
 > 대리점의 경우 타서비스와 다르게 hsqldb로 구현하여 MSA간 서로 다른 종류의 DB간에도 문제없이 동작하여 다형성을 만족하는지 확인하였다.
@@ -285,44 +247,7 @@ spring:
             allowCredentials: true
 ```
 > (확인) gateway(8088)
-```
-C:\>http POST http://localhost:8088/orders item=sidedish1 qty=2 price=22222 store=2
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/2"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/2"
-        }
-    },
-    "item": "sidedish1",
-    "price": 22222.0,
-    "qty": 2,
-    "status": "Ordered",
-    "store": "2"
-}
-```
-```
-C:\>http GET http://localhost:8088/orders/2
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/2"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/2"
-        }
-    },
-    "item": "sidedish1",
-    "price": 22222.0,
-    "qty": 2,
-    "status": "Shipped",
-    "store": "2"
-}
-```
+![image](https://user-images.githubusercontent.com/82795797/122676589-a9388100-d219-11eb-8de8-d43efaefad2b.png)
 
 ## 동기식 호출 과 Fallback 처리
 > 분석 단계에서의 조건 중 주문(app)->결제(pay)간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
@@ -390,42 +315,9 @@ C:\>http POST http://localhost:8088/orders item=sidedish1 qty=3 price=33333 stor
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
 4. 주문 생성 및 확인
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
-C:\>http POST http://localhost:8088/orders item=sidedish1 qty=3 price=33333 store=3
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/4"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/4"
-        }
-    },
-    "item": "sidedish1",
-    "price": 33333.0,
-    "qty": 3,
-    "status": "Ordered",
-    "store": "3"
-}
-
-C:\>http GET http://localhost:8081/orders/4
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/4"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/4"
-        }
-    },
-    "item": "sidedish1",
-    "price": 33333.0,
-    "qty": 3,
-    "status": "Shipped",
-    "store": "3"
-}
 ```
+![image](https://user-images.githubusercontent.com/82795797/122676689-10563580-d21a-11eb-8695-6eec935cb341.png)
+
 * 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다.(서킷브레이커, 폴백처리는 운영단계에서 설명한다.)
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리
@@ -482,65 +374,12 @@ public class PolicyHandler {
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
 2. 주문 생성 및 확인
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
-C:\>http POST http://localhost:8088/orders item=sidedish1 qty=4 price=44444 store=4
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/5"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/5"
-        }
-    },
-    "item": "sidedish1",
-    "price": 44444.0,
-    "qty": 4,
-    "status": "Ordered",
-    "store": "4"
-}
-
-C:\>http GET http://localhost:8081/orders/5
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/5"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/5"
-        }
-    },
-    "item": "sidedish1",
-    "price": 44444.0,
-    "qty": 4,
-    "status": "Payed",
-    "store": "4"
-}
----------- ---------- ---------- ---------- ---------- ---------- ----------
 3. 대리점 서비스 재시작
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
 4. 주문 확인(status : 'Payed' -> 'Shipped')
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
-C:\>http GET http://localhost:8081/orders/5
-
-{
-    "_links": {
-        "order": {
-            "href": "http://localhost:8081/orders/5"
-        },
-        "self": {
-            "href": "http://localhost:8081/orders/5"
-        }
-    },
-    "item": "sidedish1",
-    "price": 44444.0,
-    "qty": 4,
-    "status": "Shipped",
-    "store": "4"
-}
 ```
-
+![image](https://user-images.githubusercontent.com/82795797/122676810-93778b80-d21a-11eb-8be8-b03b2b591fd1.png)
 
 # 운영
 
