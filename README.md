@@ -301,15 +301,10 @@ public interface PaymentService {
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
 2. 주문 생성 및 확인
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
-C:\>http POST http://localhost:8088/orders item=sidedish1 qty=3 price=33333 store=3
+```
+![image](https://user-images.githubusercontent.com/82795797/122676945-1e588600-d21b-11eb-9c6c-f6b4ed303164.png)
 
-{
-    "error": "Internal Server Error",
-    "message": "Could not commit JPA transaction; nested exception is javax.persistence.RollbackException: Error while committing the transaction",
-    "path": "/orders",
-    "status": 500,
-    "timestamp": "2021-05-29T03:04:00.284+0000"
-}
+```
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
 3. 결제 서비스 재기동
 ---------- ---------- ---------- ---------- ---------- ---------- ----------
@@ -389,7 +384,7 @@ public class PolicyHandler {
 ```
 $ git clone https://github.com/skcc10130/sidedish.git
 ```
-<<< 캡쳐 >>>
+![image](https://user-images.githubusercontent.com/82795797/122677222-6b892780-d21c-11eb-97bf-9b955ea09484.png)
 
 > 빌드하기
 ```
@@ -398,7 +393,7 @@ $ cd app
 $ mvn package -Dmaven.test.skip=true
 -> app / customer / gateway / pay / store 모두 위의 과정 수행
 ```
-<<< 캡쳐 >>>
+![image](https://user-images.githubusercontent.com/82795797/122677262-970c1200-d21c-11eb-8611-4d1cee5a9f6e.png)
 
 > 네임스페이스 만들기
 ```
@@ -421,12 +416,7 @@ $ kubectl expose deploy store --type="ClusterIP" --port=8080 -n cnatest
 
 $ kubectl get pod, service -n cnatest
 ```
-<<< 캡쳐 >>>
-```
-$ http POST http://20.194.22.52:8080/orders item=sidedish1 price=11111 qty=1 store=1
-$ http GET http://20.194.22.52:8080/orders/2
-```
-<<< 캡쳐 >>>
+![image](https://user-images.githubusercontent.com/82795797/122677409-14378700-d21d-11eb-9776-cd55d4ee40d9.png)
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
@@ -448,28 +438,16 @@ hystrix:
       execution.isolation.thread.timeoutInMilliseconds: 777
 ```
 
-* 참조. siege 설치 및 실행(명령어)
-```
-$ kubectl run siege --image=apexacme/siege-nginx -n cnatest
-$ kubectl exec -it pod/siege -c siege -n cnatest -- /bin/bash
-root@siege:/# http POST http://20.194.22.52:8080/orders item=sidedish1 price=11111 qty=1 store=1
-```
-
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 100명
 - 60초 동안 실시
 
 ```
+수정
 root@siege:/# siege -c100 -t60S -r10 -v --content-type "application/json" 'http://20.194.22.52:8080/orders POST {"item": "sidedish7", "price":"777", "qty":"7", "store":"7"}'
 ```
 - 부하 발생하여 CB가 발동하여 요청 실패처리하였고, 밀린 부하가 pay에서 처리되면서 다시 order를 받기 시작 
-
-<<< 캡쳐 >>>
-![image](https://user-images.githubusercontent.com/73699193/98098702-07eefb80-1ed2-11eb-94bf-316df4bf682b.png)
-
-- report
-<<< 캡쳐 >>>
-![image](https://user-images.githubusercontent.com/73699193/98099047-6e741980-1ed2-11eb-9c55-6fe603e52f8b.png)
+![image](https://user-images.githubusercontent.com/82795797/122677600-f880b080-d21d-11eb-8046-6015b32986e2.png)
 
 - CB 잘 적용됨을 확인
 
@@ -480,7 +458,7 @@ root@siege:/# siege -c100 -t60S -r10 -v --content-type "application/json" 'http:
 
 ```
 # autocale out 설정
-store > deployment.yml 설정
+app > deployment.yml 설정
 ```
 ![image](https://user-images.githubusercontent.com/73699193/98187434-44fbd200-1f54-11eb-9859-daf26f812788.png)
 
@@ -546,10 +524,13 @@ kubectl set image deploy catch catch=cnateam4.azurecr.io/catch:v2 -n default
 * 기존 버전과 새 버전의 catch pod 공존 중
 
 ![image](https://user-images.githubusercontent.com/11955597/120113839-525dff80-c1b7-11eb-97ec-6ff76ae07b4c.png)
+![image](https://user-images.githubusercontent.com/82795797/122678250-ef451300-d220-11eb-911f-ce7afe24cbc0.png)
+
 
 * Availability : 100% 확인
 
 ![image](https://user-images.githubusercontent.com/11955597/120113867-6f92ce00-c1b7-11eb-848c-e773d98f9ea4.png)
+![image](https://user-images.githubusercontent.com/82795797/122678212-c290fb80-d220-11eb-8a48-1ff2e449cae3.png)
 
 
 ## Config Map
@@ -603,6 +584,8 @@ $ kubectl describe pod/catch-574665c7bc-z2tzj
 ![image](https://user-images.githubusercontent.com/11955597/120115219-a23fc500-c1bd-11eb-84ec-f8acf0fd2bf3.png)
 ![image](https://user-images.githubusercontent.com/11955597/120115282-ecc14180-c1bd-11eb-947e-179722c287b9.png)
 
+![image](https://user-images.githubusercontent.com/82795797/122678062-118a6100-d220-11eb-9a3c-9db31ef91207.png)
+
 
 ## Self-healing (Liveness Probe)
 
@@ -629,7 +612,9 @@ $ kubectl describe pod/catch-574665c7bc-z2tzj
 
 ![image](https://user-images.githubusercontent.com/11955597/120116360-c2be4e00-c1c2-11eb-9e28-04d84b06f6bd.png)
 
+![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
 
+![image](https://user-images.githubusercontent.com/82795797/122678118-5c0bdd80-d220-11eb-8b97-d1d2f0bab427.png)
 
 # --------------------------------이하 수정 필요
 # 신규 개발 조직의 추가
