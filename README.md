@@ -500,9 +500,10 @@ public class CustomerViewHandler {
 ```
 ![image](https://user-images.githubusercontent.com/82795797/122882917-a05dc180-d377-11eb-8b6e-b4bbf816d6ef.png)
 
-# 운영
-
-## Deploy / Pipeline
+# 배포 및 운영
+## CI/CD 설정
+> 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 Azure를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 Dockerfile 과 deployment.yml/service.yaml 에 포함되었다.
+![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
 
 > 소스 가져오기
 ```
@@ -738,6 +739,6 @@ $ kubectl describe pod/catch-574665c7bc-z2tzj
 
 ![image](https://user-images.githubusercontent.com/11955597/120116360-c2be4e00-c1c2-11eb-9e28-04d84b06f6bd.png)
 
-![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
+
 
 ![image](https://user-images.githubusercontent.com/82795797/122678118-5c0bdd80-d220-11eb-8b97-d1d2f0bab427.png)
