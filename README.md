@@ -132,6 +132,7 @@
 ![image](https://user-images.githubusercontent.com/82795797/122673409-49d37480-d20b-11eb-82ae-50aa63ab6094.png)
 
 # 구현
+![image](https://user-images.githubusercontent.com/82795797/122876962-0dba2400-d371-11eb-8d3e-05b1f58c809f.png)
 
 ## DDD 적용
 > 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 app 마이크로서비스). 
