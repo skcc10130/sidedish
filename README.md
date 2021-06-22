@@ -578,42 +578,61 @@ CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
 - seige 로 배포작업 직전에 워크로드를 모니터링 함.
 
-```
-$ kubectl apply -f catch/kubernetes/deployment_readiness.yml
-```
-```
-$ kubectl exec -it pod/siege -c siege -n cnatest -- /bin/bash
-root@siege:/# siege -c50 -t120S -r10 -v --content-type "application/json" 'http://52.231.14.253:8080/orders POST {"item": "sidedish7", "price":"777", "qty":"7", "store":"7"}'
-```
-
 * readiness 옵션이 없는 경우 배포 중 서비스 요청처리 실패
-
-![image](https://user-images.githubusercontent.com/11955597/120112926-014c0c80-c1b3-11eb-93c3-f418209b69c8.png)
-
+```
+    spec:
+      containers:
+        - name: app
+          image: skcc10130acr.azurecr.io/app:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: api.url.pay
+              valueFrom:
+                configMapKeyRef:
+                  name: sidedish-config
+                  key: api.url.pay
+#          readinessProbe:
+#            httpGet:
+#              path: '/actuator/health'
+#              port: 8080
+#            initialDelaySeconds: 10
+#            timeoutSeconds: 2
+#            periodSeconds: 5
+#            failureThreshold: 10
+```
 
 * readiness 옵션이 추가된 deployment.yml을 적용
 ```
-$ kubectl apply -f catch/kubernetes/deployment.yml
-```
-![image](https://user-images.githubusercontent.com/11955597/120112818-7c60f300-c1b2-11eb-951b-1514648b01ac.png)
-
-
-* 새버전으로의 배포 시작
-```
-kubectl set image deploy catch catch=cnateam4.azurecr.io/catch:v2 -n default
+spec:
+      containers:
+        - name: app
+          image: skcc10130acr.azurecr.io/app:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: api.url.pay
+              valueFrom:
+                configMapKeyRef:
+                  name: sidedish-config
+                  key: api.url.pay
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
 ```
 
 * 기존 버전과 새 버전의 catch pod 공존 중
-
-![image](https://user-images.githubusercontent.com/11955597/120113839-525dff80-c1b7-11eb-97ec-6ff76ae07b4c.png)
-![image](https://user-images.githubusercontent.com/82795797/122678250-ef451300-d220-11eb-911f-ce7afe24cbc0.png)
-
+ ![image](https://user-images.githubusercontent.com/82795797/122678250-ef451300-d220-11eb-911f-ce7afe24cbc0.png)
 
 * Availability : 100% 확인
-
-![image](https://user-images.githubusercontent.com/11955597/120113867-6f92ce00-c1b7-11eb-848c-e773d98f9ea4.png)
-![image](https://user-images.githubusercontent.com/82795797/122678212-c290fb80-d220-11eb-8a48-1ff2e449cae3.png)
-
+ ![image](https://user-images.githubusercontent.com/82795797/122678212-c290fb80-d220-11eb-8a48-1ff2e449cae3.png)
 
 ## Config Map
 * application.yml 설정 (catch 서비스)
