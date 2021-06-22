@@ -378,6 +378,128 @@ public class PolicyHandler {
 ```
 ![image](https://user-images.githubusercontent.com/82795797/122676810-93778b80-d21a-11eb-8be8-b03b2b591fd1.png)
 
+## SAGA / Correlation
+> 대리점(store) 시스템에서 결제완료를 확인하면 주문의 상태가 갱신된다.
+```
+@StreamListener(KafkaProcessor.INPUT)
+    public void wheneverPayCompleted_OrderReceive(@Payload PayCompleted payCompleted) {
+
+        if (payCompleted.isMe()) {
+            System.out.println("##### listener OrderReceive : " + payCompleted.toJson());
+            System.out.println("store_policy_paycompleted_orderreceive");
+
+            StoreManage storeManage = new StoreManage();
+            storeManage.setOrderId(payCompleted.getOrderId());
+            storeManage.setProcess("Payed");
+            storeManageRepository.save(storeManage);
+        }
+    }
+```
+
+## CQRS
+> 상태정보가 변경될때마다 event를 수신하여 조회하도록 별도의 View(Customer서비스)를 구현하여 명령과 조회를 분리하였다.
+```
+@Service
+public class CustomerViewHandler {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenOrdered_then_CREATE_1(@Payload Ordered ordered) {
+        try {
+            if (ordered.isMe()) {
+                // view 객체 생성
+                Customer customer = new Customer();
+                // view 객체에 이벤트의 Value 를 set 함
+                customer.setOrderId(ordered.getId());
+                customer.setItem(ordered.getItem());
+                customer.setQty(ordered.getQty());
+                customer.setPrice(ordered.getPrice());
+                customer.setStatus(ordered.getStatus());
+                // view 레파지 토리에 save
+                customerRepository.save(customer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenPayCompleted_then_UPDATE_1(@Payload PayCompleted payCompleted) {
+        try {
+            if (payCompleted.isMe()) {
+                // view 객체 조회
+                List<Customer> customerList = customerRepository.findByOrderId(payCompleted.getOrderId());
+                for (Customer customer : customerList) {
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    customer.setStatus(payCompleted.getProcess());
+                    // view 레파지 토리에 save
+                    customerRepository.save(customer);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenShipped_then_UPDATE_2(@Payload Shipped shipped) {
+        try {
+            if (shipped.isMe()) {
+                // view 객체 조회
+                List<Customer> customerList = customerRepository.findByOrderId(shipped.getOrderId());
+                for (Customer customer : customerList) {
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    customer.setStatus(shipped.getProcess());
+                    // view 레파지 토리에 save
+                    customerRepository.save(customer);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenOrderCancelled_then_UPDATE_3(@Payload OrderCancelled orderCancelled) {
+        try {
+            if (orderCancelled.isMe()) {
+                // view 객체 조회
+                List<Customer> customerList = customerRepository.findByOrderId(orderCancelled.getId());
+                for (Customer customer : customerList) {
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    customer.setStatus(orderCancelled.getStatus());
+                    // view 레파지 토리에 save
+                    customerRepository.save(customer);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenPayCancelled_then_UPDATE_4(@Payload PayCancelled payCancelled) {
+        try {
+            if (payCancelled.isMe()) {
+                // view 객체 조회
+                List<Customer> customerList = customerRepository.findByOrderId(payCancelled.getOrderId());
+                for (Customer customer : customerList) {
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    customer.setStatus(payCancelled.getProcess());
+                    // view 레파지 토리에 save
+                    customerRepository.save(customer);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+![image](https://user-images.githubusercontent.com/82795797/122882917-a05dc180-d377-11eb-8b6e-b4bbf816d6ef.png)
+
 # 운영
 
 ## Deploy / Pipeline
