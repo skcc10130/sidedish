@@ -39,6 +39,7 @@
 
 
 # 분석/설계
+> 구성원 개인 역할 중심의 Horizontally-Aligned 조직에서 서비스 중심의 Vertically-Aligned 조직으로 전환되면서 각 서비스를 분리하여 Domain-Driven한 마이크로서비스 아키텍쳐를 클라우드 네이티브하게 구현한다.
 
 ## AS-IS 조직 (Horizontally-Aligned)
   ![image](https://user-images.githubusercontent.com/82795797/122673113-f14fa780-d209-11eb-9bf8-e08ef5d8e958.png)
