@@ -554,42 +554,25 @@ hystrix:
 * 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 이에 반찬가게 시스템에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
 
 ```
-# autocale out 설정
-app > deployment.yml 설정
-```
-![image](https://user-images.githubusercontent.com/73699193/98187434-44fbd200-1f54-11eb-9859-daf26f812788.png)
+-- 설정 : app - deployment.yaml
 
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
+```
 ```
 $ kubectl autoscale deploy app --min=1 --max=10 --cpu-percent=15 -n cnatest
 ```
-<<< 캡쳐 >>>
-![image](https://user-images.githubusercontent.com/73699193/98100149-ce1ef480-1ed3-11eb-908e-a75b669d611d.png)
 
-
--
-- CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
-```
-$ kubectl exec -it pod/siege -c siege -n cnatest -- /bin/bash
-root@siege:/# siege -c100 -t60S -r10 -v --content-type "application/json" 'http://20.194.22.52:8080/orders POST {"item": "sidedish7", "price":"777", "qty":"7", "store":"7"}'
-```
-![image](https://user-images.githubusercontent.com/73699193/98102543-0d9b1000-1ed7-11eb-9cb6-91d7996fc1fd.png)
-
+CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
-```
-kubectl get deploy app -w -n cnatest
-```
 - 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다. max=10 
 - 부하를 줄이니 늘어난 스케일이 점점 줄어들었다.
-<<< 캡쳐 >>>
-
-![image](https://user-images.githubusercontent.com/73699193/98102926-92862980-1ed7-11eb-8f19-a673d72da580.png)
-
 - 다시 부하를 주고 확인하니 Availability가 높아진 것을 확인 할 수 있었다.
 
-![image](https://user-images.githubusercontent.com/73699193/98103249-14765280-1ed8-11eb-8c7c-9ea1c67e03cf.png)
-
 ![image](https://user-images.githubusercontent.com/82795797/122678805-40ee9d00-d223-11eb-90c2-8af23b70a14e.png)
-
 
 ## 무정지 재배포
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
