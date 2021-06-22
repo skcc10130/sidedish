@@ -503,9 +503,10 @@ public class CustomerViewHandler {
 # 배포 및 운영
 ## CI/CD 설정
 > 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 Azure를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 Dockerfile 과 deployment.yml/service.yaml 에 포함되었다.
-![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
 
-![image](https://user-images.githubusercontent.com/82795797/122677409-14378700-d21d-11eb-9776-cd55d4ee40d9.png)
+ ![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
+
+ ![image](https://user-images.githubusercontent.com/82795797/122677409-14378700-d21d-11eb-9776-cd55d4ee40d9.png)
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
@@ -546,7 +547,8 @@ hystrix:
 * 검증 및 테스트
 - 부하테스터(Siege툴)을 통한 서킷 브레이커 동작 확인 : 동시사용자 100명 / 60초 동안 실시
 - 부하 발생하여 CB가 발동하여 요청 실패처리하였고, 밀린 부하가 pay에서 처리되면서 다시 order를 받기 시작 
-![image](https://user-images.githubusercontent.com/82795797/122677600-f880b080-d21d-11eb-8046-6015b32986e2.png)
+
+ ![image](https://user-images.githubusercontent.com/82795797/122677600-f880b080-d21d-11eb-8046-6015b32986e2.png)
 
 * 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌. 하지만, 93.989% 가 성공하였고 약6%가 실패했다는 것은 고객 사용성에 있어 좋지 않기 때문에 Retry 설정과 동적 Scale out (replica의 자동적 추가,HPA) 을 통하여 시스템을 확장 해주는 후속처리가 필요.
 
@@ -568,9 +570,7 @@ $ kubectl autoscale deploy app --min=1 --max=10 --cpu-percent=15 -n cnatest
 
 CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
-- 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다. max=10 
-- 부하를 줄이니 늘어난 스케일이 점점 줄어들었다.
-- 다시 부하를 주고 확인하니 Availability가 높아진 것을 확인 할 수 있었다.
+- 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다. max=10
 
 ![image](https://user-images.githubusercontent.com/82795797/122678805-40ee9d00-d223-11eb-90c2-8af23b70a14e.png)
 
