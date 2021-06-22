@@ -505,42 +505,6 @@ public class CustomerViewHandler {
 > 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 Azure를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 Dockerfile 과 deployment.yml/service.yaml 에 포함되었다.
 ![image](https://user-images.githubusercontent.com/82795797/122677895-4e098d00-d21f-11eb-9b03-d564eb36e610.png)
 
-> 소스 가져오기
-```
-$ git clone https://github.com/skcc10130/sidedish.git
-```
-![image](https://user-images.githubusercontent.com/82795797/122677222-6b892780-d21c-11eb-97bf-9b955ea09484.png)
-
-> 빌드하기
-```
-$ cd sidedish
-$ cd app
-$ mvn package -Dmaven.test.skip=true
--> app / customer / gateway / pay / store 모두 위의 과정 수행
-```
-![image](https://user-images.githubusercontent.com/82795797/122677262-970c1200-d21c-11eb-8611-4d1cee5a9f6e.png)
-
-> 네임스페이스 만들기
-```
-$ kubectl create ns cnatest
-```
-
-- 컨테이너 생성 및 확인
-```
-$ kubectl create deploy app --image=skcc10130acr.azurecr.io/app:v1 -n cnatest
-$ kubectl create deploy customer --image=skcc10130acr.azurecr.io/customer:v1 -n cnatest
-$ kubectl create deploy gateway --image=skcc10130acr.azurecr.io/gateway:v1 -n cnatest
-$ kubectl create deploy pay --image=skcc10130acr.azurecr.io/pay:v1 -n cnatest
-$ kubectl create deploy store --image=skcc10130acr.azurecr.io/store:v1 -n cnatest
- 
-$ kubectl expose deploy app --type="ClusterIP" --port=8080 -n cnatest
-$ kubectl expose deploy customer --type="ClusterIP" --port=8080 -n cnatest
-$ kubectl expose deploy gateway --type="ClusterIP" --type=LoadBalancer --port=8080 -n cnatest
-$ kubectl expose deploy pay --type="ClusterIP" --port=8080 -n cnatest
-$ kubectl expose deploy store --type="ClusterIP" --port=8080 -n cnatest
-
-$ kubectl get pod, service -n cnatest
-```
 ![image](https://user-images.githubusercontent.com/82795797/122677409-14378700-d21d-11eb-9776-cd55d4ee40d9.png)
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
