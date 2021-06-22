@@ -510,10 +510,26 @@ public class CustomerViewHandler {
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+```
+-- 구현 : app ~ external - PaymentService.java
+package sidedish.external;
 
-시나리오는 앱(app)-->결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-- Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 777 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
+@FeignClient(name = "pay", url = "${api.url.pay}")
+public interface PaymentService {
+
+    @RequestMapping(method = RequestMethod.POST, path = "/payments")
+    public void pay(@RequestBody Payment payment);
+
+}
+```
+
+* 시나리오는 앱(app) -> 결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+* Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 777 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
 ```
 # application.yml
 feign:
@@ -527,23 +543,15 @@ hystrix:
       execution.isolation.thread.timeoutInMilliseconds: 777
 ```
 
-* 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
-- 동시사용자 100명
-- 60초 동안 실시
-
-```
-수정
-root@siege:/# siege -c100 -t60S -r10 -v --content-type "application/json" 'http://20.194.22.52:8080/orders POST {"item": "sidedish7", "price":"777", "qty":"7", "store":"7"}'
-```
+* 검증 및 테스트
+- 부하테스터(Siege툴)을 통한 서킷 브레이커 동작 확인 : 동시사용자 100명 / 60초 동안 실시
 - 부하 발생하여 CB가 발동하여 요청 실패처리하였고, 밀린 부하가 pay에서 처리되면서 다시 order를 받기 시작 
 ![image](https://user-images.githubusercontent.com/82795797/122677600-f880b080-d21d-11eb-8046-6015b32986e2.png)
 
-- CB 잘 적용됨을 확인
-
+* 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌. 하지만, 93.989% 가 성공하였고 약6%가 실패했다는 것은 고객 사용성에 있어 좋지 않기 때문에 Retry 설정과 동적 Scale out (replica의 자동적 추가,HPA) 을 통하여 시스템을 확장 해주는 후속처리가 필요.
 
 ### 오토스케일 아웃
-
-- 반찬가게 시스템에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
+* 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 이에 반찬가게 시스템에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
 
 ```
 # autocale out 설정
