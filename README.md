@@ -678,6 +678,7 @@ data:
 
 * catch deploy 재배포 후 liveness 가 적용된 부분 확인
 * catch 서비스의 liveness 가 발동되어 5번 retry 시도한 부분 확인
- ![image](https://user-images.githubusercontent.com/82795797/122678118-5c0bdd80-d220-11eb-8b97-d1d2f0bab427.png)
+
+![image](https://user-images.githubusercontent.com/82795797/122678118-5c0bdd80-d220-11eb-8b97-d1d2f0bab427.png)
 
 감사합니다.
