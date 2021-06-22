@@ -629,9 +629,11 @@ spec:
 ```
 
 * 기존 버전과 새 버전의 catch pod 공존 중
+
  ![image](https://user-images.githubusercontent.com/82795797/122678250-ef451300-d220-11eb-911f-ce7afe24cbc0.png)
 
 * Availability : 100% 확인
+
  ![image](https://user-images.githubusercontent.com/82795797/122678212-c290fb80-d220-11eb-8a48-1ff2e449cae3.png)
 
 ## Config Map
